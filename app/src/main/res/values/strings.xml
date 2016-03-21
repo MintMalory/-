@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Metronome</string>
+    <string name="manual_mode_title">Manual mode</string>
+    <string name="vibro_btn_text">Vibration</string>
+    <string name="flash_btn_text">Flash</string>
+    <string name="sound_btn_text">Sound</string>
+    <string name="set_bpm_text">Set bpm you need below</string>
+    <string name="indicator_text">Indicator</string>
+</resources>
