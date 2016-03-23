@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/blue"
+        android:background="@drawable/bbg"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -137,12 +137,13 @@
             android:id="@+id/seekBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="90"
-            android:max="200"
+            android:max="208"
             android:layout_marginBottom="15dp"
             android:layout_marginTop="15dp"
             android:progress="100"
+            android:minHeight="25dp"
+            android:maxHeight="50dp"
             android:progressDrawable="@drawable/seekbar"
             android:thumb="@drawable/arrows" />
 
@@ -185,8 +186,7 @@
         android:layout_gravity="center"
         android:layout_margin="15dp"
         android:background="@drawable/start_btn"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
+
         android:textAllCaps="true"
         android:textColor="@android:color/white"
         android:textOff="Start"
