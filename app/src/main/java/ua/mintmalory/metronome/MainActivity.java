@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 		initViews();
-		initBrodcastReceiver();
+		initBroadcastReceiver();
 		initManualModeButtonsListeners();
 		initBpmChangersListeners();
         initStartBtnListener();
     }
 
 	private void initViews(){
-		mVibrationToggleButton = (ToggleButton) findViewById(R.id.start_stop_button);
+		mVibrationToggleButton = (ToggleButton) findViewById(R.id.vibro_btn);
 		mFlashToggleButton = (ToggleButton) findViewById(R.id.start_stop_button);
 		mSoundToggleButton = (ToggleButton) findViewById(R.id.sound_btn);
 		
@@ -55,11 +55,11 @@ public class MainActivity extends AppCompatActivity {
         mIndicatorImageView = (ImageView) findViewById(R.id.indicator_imgView);
 	}
 	
-	private void  initBrodcastReceiver(){
+	private void initBroadcastReceiver(){
 		mMetronomeServiceReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				boolean flashIsOn = intent.getBooleanExtra("state", false);
+				boolean flashIsOn = intent.getBooleanExtra(MetronomeService.INDICATOR_STATE_EXTRA, false);
 
 				if (flashIsOn){
 					mIndicatorImageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.indicator_on));
@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
 			intent.putExtra(MetronomeService.VIBRATION_EXTRA, mVibrationToggleButton.isChecked());
 			intent.putExtra(MetronomeService.FLASH_EXTRA, mFlashToggleButton.isChecked());
 			intent.putExtra(MetronomeService.SOUND_EXTRA, mSoundToggleButton.isChecked());
-			
 			intent.putExtra(MetronomeService.BPM_EXTRA, mBmpSeekBar.getProgress());
 			
 			startService(intent);

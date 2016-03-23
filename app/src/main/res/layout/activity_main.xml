@@ -144,7 +144,7 @@
             android:progress="100"
             android:minHeight="25dp"
             android:maxHeight="50dp"
-            android:progressDrawable="@drawable/seekbar"
+            android:progressDrawable="@drawable/seekbar_bg"
             android:thumb="@drawable/arrows" />
 
         <TextView

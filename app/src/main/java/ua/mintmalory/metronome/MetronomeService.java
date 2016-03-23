@@ -19,6 +19,7 @@ public class MetronomeService extends Service {
     public static final String FLASH_EXTRA = MetronomeService.class + ".flash";
     public static final String SOUND_EXTRA = MetronomeService.class + ".sound";
     public static final String BPM_EXTRA = MetronomeService.class + ".bpm";
+    public static final String INDICATOR_STATE_EXTRA = MetronomeService.class + ".indicator";
 
     private Timer timer;
     private TimerTask tone; //rename
@@ -26,7 +27,7 @@ public class MetronomeService extends Service {
     private Intent intent;
     private Handler handler;
 
-    private boolean CAMERA_IS_AVALIBLE;
+    private boolean CAMERA_IS_AVAILABLE;
     private boolean vibroOn = false;
     private boolean flashOn = false;
     private boolean soundOn = false;
@@ -44,10 +45,10 @@ public class MetronomeService extends Service {
         timer = new Timer("MetronomeTimer", true);
 
         handler = new Handler();
-        CAMERA_IS_AVALIBLE = getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
+        CAMERA_IS_AVAILABLE = getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
                 && getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
-            if (CAMERA_IS_AVALIBLE) {
+        if (CAMERA_IS_AVAILABLE && flashOn) {
             camera = Camera.open();
             Camera.Parameters p = camera.getParameters();
             p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -60,34 +61,27 @@ public class MetronomeService extends Service {
 
             @Override
             public void run() {
-                    intent.putExtra("state", true);
-
+                intent.putExtra(INDICATOR_STATE_EXTRA, true);
                 sendBroadcast(intent);
 
-                if (CAMERA_IS_AVALIBLE && flashOn) {
+                if (CAMERA_IS_AVAILABLE && flashOn) {
                     camera.startPreview();
                 }
-
-
 
                 if (soundOn) {
                     tick.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 100);
                 }
 
-
                 if (vibroOn) {
                     v.vibrate(100);
                 }
 
-
-
-                if (CAMERA_IS_AVALIBLE && flashOn) {
+                if (CAMERA_IS_AVAILABLE && flashOn) {
                     camera.stopPreview();
-                    camera.release();
                 }
 
 
-                intent.putExtra("state", false);
+                intent.putExtra(INDICATOR_STATE_EXTRA, false);
                 sendBroadcast(intent);
             }
         };
@@ -100,6 +94,9 @@ public class MetronomeService extends Service {
     public void onDestroy() {
         timer.cancel();
         timer.purge();
+        if (camera!=null) {
+            camera.release();
+        }
         handler.removeCallbacks(tone);
 
     }
