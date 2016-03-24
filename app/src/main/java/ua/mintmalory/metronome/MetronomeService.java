@@ -59,7 +59,8 @@ public class MetronomeService extends Service {
                 intent.putExtra(INDICATOR_STATE_EXTRA, true);
                 sendBroadcast(intent);
 
-                if ((camera != null) && flashOn) {
+                if (cameraIsAvailable && flashOn) {
+                    camera = Camera.open();
                     p = camera.getParameters();
 					p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 					camera.setParameters(p);
@@ -73,7 +74,8 @@ public class MetronomeService extends Service {
                     vibrator.vibrate(100);
                 }
 
-                if ((camera != null) && flashOn) {
+                if (cameraIsAvailable && flashOn) {
+                    camera = Camera.open();
                     p = camera.getParameters();
                     p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     camera.setParameters(p);

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         mVibrationToggleButton = (ToggleButton) findViewById(R.id.vibro_btn);
-        mFlashToggleButton = (ToggleButton) findViewById(R.id.start_stop_button);
+        mFlashToggleButton = (ToggleButton) findViewById(R.id.flash_btn);
         mSoundToggleButton = (ToggleButton) findViewById(R.id.sound_btn);
         mStartStopToggleButton = (ToggleButton) findViewById(R.id.start_stop_button);
         mBmpSeekBar = (SeekBar) findViewById(R.id.seekBar);
