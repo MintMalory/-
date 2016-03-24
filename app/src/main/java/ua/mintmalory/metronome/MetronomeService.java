@@ -15,10 +15,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MetronomeService extends Service {
-    public static final String VIBRATION_EXTRA = MetronomeService.class + ".vibration";
-    public static final String FLASH_EXTRA = MetronomeService.class + ".flash";
-    public static final String SOUND_EXTRA = MetronomeService.class + ".sound";
-    public static final String BPM_EXTRA = MetronomeService.class + ".bpm";
     public static final String INDICATOR_STATE_EXTRA = MetronomeService.class + ".indicator";
     public static final String BROADCAST_ACTION = MetronomeService.class + ".broadcast";
 
@@ -28,7 +24,7 @@ public class MetronomeService extends Service {
     private Intent intent;
     private Handler handler;
 
-    private boolean CAMERA_IS_AVAILABLE;
+    private boolean cameraIsAvailable;
     private boolean vibroOn = false;
     private boolean flashOn = false;
     private boolean soundOn = false;
@@ -46,16 +42,16 @@ public class MetronomeService extends Service {
         timer = new Timer("MetronomeTimer", true);
 
         handler = new Handler();
-        CAMERA_IS_AVAILABLE = getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
+        cameraIsAvailable = getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
                 && getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
-        if (CAMERA_IS_AVAILABLE && flashOn) {
+        if (cameraIsAvailable && flashOn) {
             camera = Camera.open();
         }
 
         oneIteration = new TimerTask() {
-            private ToneGenerator tick = new ToneGenerator(AudioManager.STREAM_MUSIC, 100); //tickSound
-            private Vibrator v = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE); //vibrator
+            private ToneGenerator tickSound = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            private Vibrator vibrator = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
             private Camera.Parameters p;
 
             @Override
@@ -63,26 +59,24 @@ public class MetronomeService extends Service {
                 intent.putExtra(INDICATOR_STATE_EXTRA, true);
                 sendBroadcast(intent);
 
-                if (CAMERA_IS_AVAILABLE && flashOn) {
+                if ((camera != null) && flashOn) {
                     p = camera.getParameters();
-                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    camera.setParameters(p);
-                    camera.startPreview();
+					p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+					camera.setParameters(p);
                 }
 
                 if (soundOn) {
-                    tick.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 100);
+                    tickSound.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 100);
                 }
 
                 if (vibroOn) {
-                    v.vibrate(100);
+                    vibrator.vibrate(100);
                 }
 
-                if (CAMERA_IS_AVAILABLE && flashOn) {
+                if ((camera != null) && flashOn) {
                     p = camera.getParameters();
                     p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     camera.setParameters(p);
-                    camera.stopPreview();
                 }
 
                 intent.putExtra(INDICATOR_STATE_EXTRA, false);
@@ -109,11 +103,11 @@ public class MetronomeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        vibroOn = intent.getBooleanExtra(VIBRATION_EXTRA, false);
-        flashOn = intent.getBooleanExtra(FLASH_EXTRA, false);
-        soundOn = intent.getBooleanExtra(SOUND_EXTRA, false);
+        vibroOn = intent.getBooleanExtra(MainActivity.VIBRATION_EXTRA, false);
+        flashOn = intent.getBooleanExtra(MainActivity.FLASH_EXTRA, false);
+        soundOn = intent.getBooleanExtra(MainActivity.SOUND_EXTRA, false);
 
-        int bpm = intent.getIntExtra(BPM_EXTRA, 100);
+        int bpm = intent.getIntExtra(MainActivity.BPM_EXTRA, 100);
 
         timer.schedule(oneIteration, new Date(), 60000 / bpm);
 

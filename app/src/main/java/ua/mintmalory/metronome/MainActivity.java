@@ -18,6 +18,12 @@ import android.widget.ToggleButton;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final String VIBRATION_EXTRA = MainActivity.class + ".vibration";
+    public static final String FLASH_EXTRA = MainActivity.class + ".flash";
+    public static final String SOUND_EXTRA = MainActivity.class + ".sound";
+    public static final String BPM_EXTRA = MainActivity.class + ".bpm";
+    public static final String START_STOP_EXTRA = MainActivity.class + ".start";
+
     private static final String TAG = MainActivity.class.toString();
 
     private ToggleButton mVibrationToggleButton;
@@ -161,13 +167,37 @@ public class MainActivity extends AppCompatActivity {
         stopService(intent);
 
         if ((mStartStopToggleButton.isChecked()) && (mBmpSeekBar.getProgress() > 0)) {
-            intent.putExtra(MetronomeService.VIBRATION_EXTRA, mVibrationToggleButton.isChecked());
-            intent.putExtra(MetronomeService.FLASH_EXTRA, mFlashToggleButton.isChecked());
-            intent.putExtra(MetronomeService.SOUND_EXTRA, mSoundToggleButton.isChecked());
-            intent.putExtra(MetronomeService.BPM_EXTRA, mBmpSeekBar.getProgress());
+            intent.putExtra(VIBRATION_EXTRA, mVibrationToggleButton.isChecked());
+            intent.putExtra(FLASH_EXTRA, mFlashToggleButton.isChecked());
+            intent.putExtra(SOUND_EXTRA, mSoundToggleButton.isChecked());
+            intent.putExtra(BPM_EXTRA, mBmpSeekBar.getProgress());
 
             startService(intent);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(VIBRATION_EXTRA, mVibrationToggleButton.isChecked());
+        outState.putBoolean(FLASH_EXTRA, mFlashToggleButton.isChecked());
+        outState.putBoolean(SOUND_EXTRA, mSoundToggleButton.isChecked());
+        outState.putInt(BPM_EXTRA, mBmpSeekBar.getProgress());
+        outState.putBoolean(START_STOP_EXTRA, mSoundToggleButton.isChecked());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mVibrationToggleButton.setChecked(savedInstanceState.getBoolean(VIBRATION_EXTRA));
+        mFlashToggleButton.setChecked(savedInstanceState.getBoolean(FLASH_EXTRA));
+        mSoundToggleButton.setChecked(savedInstanceState.getBoolean(SOUND_EXTRA));
+        mStartStopToggleButton.setChecked(savedInstanceState.getBoolean(START_STOP_EXTRA));
+
+        int bpm = savedInstanceState.getInt(BPM_EXTRA);
+        mBmpEditText.setText(Integer.toString(bpm));
+        mBmpSeekBar.setProgress(bpm);
     }
 
     @Override
